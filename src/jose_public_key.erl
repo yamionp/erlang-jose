@@ -40,13 +40,12 @@ pem_encode(PEMEntries) when is_list(PEMEntries) ->
 	try
 		public_key:pem_encode(PEMEntries)
 	catch
-		Class:Reason ->
-			ST = erlang:get_stacktrace(),
+		Class:Reason:Stacktrace ->
 			case pem_enc(PEMEntries) of
 				{true, PEMBinary} ->
 					PEMBinary;
 				false ->
-					erlang:raise(Class, Reason, ST)
+					erlang:raise(Class, Reason, Stacktrace)
 			end
 	end.
 
@@ -56,13 +55,12 @@ pem_entry_decode(PEMEntry) ->
 		try
 			public_key:pem_entry_decode(PEMEntry)
 		catch
-			Class:Reason ->
-				ST = erlang:get_stacktrace(),
+			Class:Reason:Stacktrace ->
 				case pem_entry_dec(PEMEntry) of
 					{true, DecodedPEMEntry} ->
 						DecodedPEMEntry;
 					false ->
-						erlang:raise(Class, Reason, ST)
+						erlang:raise(Class, Reason, Stacktrace)
 				end
 		end,
 	case Result of
@@ -80,13 +78,12 @@ pem_entry_decode(PEMEntry, Password) ->
 		try
 			public_key:pem_entry_decode(PEMEntry, Password)
 		catch
-			Class:Reason ->
-				ST = erlang:get_stacktrace(),
+			Class:Reason:Stacktrace ->
 				case pem_entry_dec(PEMEntry) of
 					{true, DecodedPEMEntry} ->
 						DecodedPEMEntry;
 					false ->
-						erlang:raise(Class, Reason, ST)
+						erlang:raise(Class, Reason, Stacktrace)
 				end
 		end,
 	case Result of
@@ -103,13 +100,12 @@ pem_entry_encode(ASN1Type, Entity) ->
 	try
 		public_key:pem_entry_encode(ASN1Type, Entity)
 	catch
-		Class:Reason ->
-			ST = erlang:get_stacktrace(),
+		Class:Reason:Stacktrace ->
 			case pem_entry_enc(ASN1Type, Entity) of
 				{true, PEMEntry} ->
 					PEMEntry;
 				false ->
-					erlang:raise(Class, Reason, ST)
+					erlang:raise(Class, Reason, Stacktrace)
 			end
 	end.
 
@@ -118,13 +114,12 @@ pem_entry_encode(ASN1Type, Entity, Password) ->
 	try
 		public_key:pem_entry_encode(ASN1Type, Entity, Password)
 	catch
-		Class:Reason ->
-			ST = erlang:get_stacktrace(),
+		Class:Reason:Stacktrace ->
 			case pem_entry_enc(ASN1Type, Entity, Password) of
 				{true, PEMEntry} ->
 					PEMEntry;
 				false ->
-					erlang:raise(Class, Reason, ST)
+					erlang:raise(Class, Reason, Stacktrace)
 			end
 	end.
 
@@ -142,7 +137,7 @@ pem_enc([Entry={'PrivateKeyInfo', _, _} | Entries], Acc) ->
 		try
 			public_key:pem_encode([Entry])
 		catch
-			_:_ ->
+			_:_:_ ->
 				pem_entry_enc(Entry)
 		end,
 	pem_enc(Entries, [Encoded | Acc]);
@@ -230,13 +225,12 @@ pem_entry_enc0(ASN1Type, Entry, Cipher) ->
 	try
 		public_key:pem_entry_encode(ASN1Type, Entry, Cipher)
 	catch
-		Class:Reason ->
-			ST = erlang:get_stacktrace(),
+		Class:Reason:Stacktrace ->
 			case pem_entry_enc1(ASN1Type, Entry, Cipher) of
 				{true, Encoded} ->
 					Encoded;
 				false ->
-					erlang:raise(Class, Reason, ST)
+					erlang:raise(Class, Reason, Stacktrace)
 			end
 	end.
 
